@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
+from app.core.auth import get_current_user
 from app.core.security import hash_password
 from app.db import models
 from app.db.database import get_db
@@ -12,7 +12,14 @@ router = APIRouter(
     prefix="/users",
     tags=["Users"],
 )
-
+@router.get(
+    "/me",
+    response_model=UserResponse,
+)
+def get_me(
+    current_user: models.User = Depends(get_current_user),
+):
+    return current_user
 
 @router.post(
     "",
